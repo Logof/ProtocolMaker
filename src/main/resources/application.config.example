@@ -1,0 +1,4 @@
+confluenceUrl=https://confluence.otr.ru
+login=user_name
+password=user_password
+msTemplateFolder=/home/user/IdeaProjects/ProtocolMaker/build/classes/java/main/ru/otr/pm/MSTemplate/
