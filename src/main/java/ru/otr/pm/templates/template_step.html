@@ -1,0 +1,111 @@
+<h2><span>${step.name}</span></h2>
+
+<h3>Цель шага:</h3>
+<p>Приём из ПООД сообщения-container</p>
+
+<h3>Краткое описание шага:</h3>
+<p>-</p>
+
+<h3>Микросервис:</h3>
+<p><ac:link><ri:page ri:content-title="Адаптер по приему сообщений из ПООД в ПВИ (version 2.0)"/></ac:link></p>
+
+<h3>Режим работы микросервиса:</h3>
+<p>-</p>
+
+<h3>Настройки Camunda:</h3>
+<h4><strong>Extensions:</strong></h4>
+<table class="wrapped">
+    <colgroup>
+        <col/>
+        <col/>
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>Ключ</th>
+            <th>Значение</th>
+        </tr>
+        {$tr_extensions}
+    </tbody>
+</table>
+
+<h4><strong>Listeners:</strong></h4>
+<table class="wrapped">
+    <colgroup>
+        <col/>
+        <col/>
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>Ключ</th>
+            <th>Значение</th>
+        </tr>
+        <tr>
+            <th>-</th>
+            <th>-</th>
+        </tr>
+    </tbody>
+</table>
+
+<h4><strong>Input/Output:</strong></h4>
+<table class="wrapped">
+    <colgroup>
+        <col/>
+        <col/>
+        <col/>
+        <col/>
+        <col/>
+        <col/>
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>In/Out</th>
+            <th>Переменная локального контекста</th>
+            <th>Тип</th>
+            <th>Переменная глобального контекста</th>
+            <th>Значение для схемы</th>
+            <th>Комментарий</th>
+        </tr>
+        {$tr_input_output}
+    </tbody>
+</table>
+
+<h3><strong>Данные, приходящие на вход микросервиса</strong></h3>
+<ac:structured-macro ac:name="expand" ac:schema-version="1"  ac:macro-id="e6d7b59e-31ef-4bbb-b9c9-15500f5deec1">
+    <ac:parameter ac:name="title">Пример IS-сообщения (header+body)</ac:parameter>
+    <ac:rich-text-body>
+        <p class="auto-cursor-target"><br/></p>
+
+        <ac:structured-macro ac:name="code" ac:schema-version="1" ac:macro-id="b2a0cfba-4cc4-489c-a7e4-8f034b9ff872">
+            <ac:parameter ac:name="title">XML</ac:parameter>
+            <ac:plain-text-body><![CDATA[]]></ac:plain-text-body>
+        </ac:structured-macro>
+        <p class="auto-cursor-target"><br/></p>
+
+        <ac:structured-macro ac:name="expand" ac:schema-version="1" ac:macro-id="6e1416a0-dd70-48f0-894b-708ba3169f98">
+            <ac:parameter ac:name="title">Вложение XML</ac:parameter>
+            <ac:rich-text-body>
+                <p class="auto-cursor-target"><br/></p>
+                <ac:structured-macro ac:name="code" ac:schema-version="1" ac:macro-id="1ba95a1c-803b-43c1-81ad-f8c6cba74f43">
+                    <ac:parameter ac:name="language">xml</ac:parameter>
+                    <ac:plain-text-body><![CDATA[]]></ac:plain-text-body>
+                </ac:structured-macro>
+                <p class="auto-cursor-target"><br/></p>
+            </ac:rich-text-body>
+        </ac:structured-macro>
+
+        <p class="auto-cursor-target"><br/></p>
+    </ac:rich-text-body>
+</ac:structured-macro>
+
+<h3>Данные, полученные на выходе микросервиса</h3>
+<ac:structured-macro ac:name="expand" ac:schema-version="1" ac:macro-id="2fc6941d-5570-437a-9fe9-797893c5d5f5">
+    <ac:parameter ac:name="title">Пример IS-сообщения (header+body)</ac:parameter>
+    <ac:rich-text-body>
+        <p class="auto-cursor-target"><br/></p>
+        <ac:structured-macro ac:name="code" ac:schema-version="1" ac:macro-id="6d008ac2-ab8a-40d4-a8ef-f6437f83fa6b">
+            <ac:parameter ac:name="language">js</ac:parameter>
+            <ac:plain-text-body><![CDATA[]]></ac:plain-text-body>
+        </ac:structured-macro>
+        <p class="auto-cursor-target"><br/></p>
+    </ac:rich-text-body>
+</ac:structured-macro>

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_06yzwj5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.7.0">
+  <bpmn:process id="BP06_01.0_0000137" name="Веб-сервис ФНП подтверждения нотариального удостоверенного документа" isExecutable="true">
+    <bpmn:documentation>ПВИ принимает из ПООД запрос в адрес Федеральная нотариальная палата (ФНП)
+Запрос отправляется в СМЭВ3
+СМЭВ3 присылает ответ от ФНП
+Формируется информация для маршрутизации ответа
+Полученные данные передаются в ПООД</bpmn:documentation>
+    <bpmn:subProcess id="SubProcess_FNP" name="Проверка подлинности нотариально удостоверенного документа">
+      <bpmn:incoming>Flow_1eznba3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i7yp7v</bpmn:outgoing>
+      <bpmn:intermediateThrowEvent id="SmevAdapterOutcome_CheckDocumentRequest_FNP_SBP1" name="Шаг 3. Отправка запроса на проверку нотариально удостоверенного документа">
+        <bpmn:documentation>Формирование и передача сообщения в формате СМЭВ3, предназначенного для отправки исходящего запроса в ФНП России на получение сведений о подлинности нотариального документа с ЭП нотариуса.</bpmn:documentation>
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="serviceVersion" value="1.0" />
+            <camunda:property name="serviceName" value="SmevAdapterOutcome" />
+            <camunda:property name="adapterType" value="SendRequest" />
+            <camunda:property name="SendSmevStatusToPood" value="true" />
+            <camunda:property name="SignWithPersonalSignature" value="true" />
+          </camunda:properties>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_10qnvjt</bpmn:incoming>
+        <bpmn:outgoing>Flow_059afsz</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1me96ut</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_0bz12rw" />
+      </bpmn:intermediateThrowEvent>
+      <bpmn:intermediateThrowEvent id="PoodAdapterOutcome_SendReceiptCashService_v1_BP08_SBP2" name="Шаг 9. Отправка статуса проверки нотариально удостоверенного документа">
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="serviceName" value="PoodAdapterOutcome" />
+            <camunda:property name="serviceVersion" value="2.0" />
+          </camunda:properties>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">${payload}</camunda:inputParameter>
+            <camunda:inputParameter name="entity_id">${entity_id}</camunda:inputParameter>
+            <camunda:inputParameter name="integration_context">${integration_context}</camunda:inputParameter>
+            <camunda:inputParameter name="properties">${properties}</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1bv0g97</bpmn:incoming>
+        <bpmn:outgoing>Flow_1u49wwe</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1ahadur" />
+      </bpmn:intermediateThrowEvent>
+      <bpmn:endEvent id="EndSendReceipt_BP08_SBP2">
+        <bpmn:incoming>Flow_1u49wwe</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:intermediateCatchEvent id="SmevAdapterIncome_StatCardStatusResponse_FNP_SBP2" name="Шаг 6. Получение статуса проверки нотариально удостоверенного документа">
+        <bpmn:documentation>Прием из СМЭВ3 сведений с результатами проверки подлинности нотариального документа с ЭП нотариуса.</bpmn:documentation>
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="serviceName" value="SmevAdapterIncome" />
+            <camunda:property name="serviceVersion" value="1.0" />
+            <camunda:property name="adapterType" value="GetResponse" />
+          </camunda:properties>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1me96ut</bpmn:incoming>
+        <bpmn:outgoing>Flow_137bzn6</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_0pifym6" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:task id="PoodDocsBuilder_1" name="Шаг 2. Подготовка транспортной информации">
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="serviceName" value="PoodDocsBuilder" />
+            <camunda:property name="serviceVersion" value="1.0" />
+            <camunda:property name="serviceMode" value="poodPVI" />
+          </camunda:properties>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="attachments">${internal_attachments}</camunda:inputParameter>
+            <camunda:inputParameter name="payload">${payload}</camunda:inputParameter>
+            <camunda:inputParameter name="delivery_type">СМЭВ</camunda:inputParameter>
+            <camunda:inputParameter name="recipient_type">ФНП</camunda:inputParameter>
+            <camunda:inputParameter name="namespace">urn://x-artefacts-fciit-ru/svd/2.1.0</camunda:inputParameter>
+            <camunda:inputParameter name="in_container">${in_container}</camunda:inputParameter>
+            <camunda:outputParameter name="id_reestr_record">${id_reestr_record}</camunda:outputParameter>
+            <camunda:outputParameter name="in_container">${in_container}</camunda:outputParameter>
+            <camunda:outputParameter name="multi_delivery">${multi_delivery}</camunda:outputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1pyt34z</bpmn:incoming>
+        <bpmn:outgoing>Flow_10qnvjt</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id="Flow_10qnvjt" sourceRef="PoodDocsBuilder_1" targetRef="SmevAdapterOutcome_CheckDocumentRequest_FNP_SBP1" />
+      <bpmn:sequenceFlow id="Flow_1u49wwe" sourceRef="PoodAdapterOutcome_SendReceiptCashService_v1_BP08_SBP2" targetRef="EndSendReceipt_BP08_SBP2" />
+      <bpmn:startEvent id="Start_FNP">
+        <bpmn:outgoing>Flow_1pyt34z</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_1pyt34z" sourceRef="Start_FNP" targetRef="PoodDocsBuilder_1" />
+      <bpmn:sequenceFlow id="Flow_1me96ut" sourceRef="SmevAdapterOutcome_CheckDocumentRequest_FNP_SBP1" targetRef="SmevAdapterIncome_StatCardStatusResponse_FNP_SBP2">
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="flow" value="false" />
+          </camunda:properties>
+        </bpmn:extensionElements>
+      </bpmn:sequenceFlow>
+      <bpmn:task id="PoodDocsBuilder_FNP_SBP2" name="Шаг 8. Подготовка сведений для ПООД">
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="serviceName" value="PoodDocsBuilder" />
+            <camunda:property name="serviceVersion" value="1.0" />
+            <camunda:property name="serviceMode" value="pviPOOD" />
+            <camunda:property name="processName" value="BP_0_.0_00_" />
+            <camunda:property name="poodStepId" value="SendFNPCheckDocumentResponse" />
+            <camunda:property name="isSavingFromMessageBodyRequired" value="true" />
+            <camunda:property name="isDocumentFileRequired" value="false" />
+            <camunda:property name="documentTypePath" value="integration_context.context.entities[0].type" />
+            <camunda:property name="dataConverterType" value="base64" />
+          </camunda:properties>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_15wtbj7</bpmn:incoming>
+        <bpmn:outgoing>Flow_1bv0g97</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id="Flow_1bv0g97" sourceRef="PoodDocsBuilder_FNP_SBP2" targetRef="PoodAdapterOutcome_SendReceiptCashService_v1_BP08_SBP2" />
+      <bpmn:task id="PoodDocsBuilder_SendStatus_FNP" name="Шаг 4. Подготовка сведений для ПООД">
+        <bpmn:documentation>Сформировать данные о техническом статусе отправки запроса в СМЭВ в структуре для ПООД.</bpmn:documentation>
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="serviceName" value="PoodDocsBuilder" />
+            <camunda:property name="serviceVersion" value="1.0" />
+            <camunda:property name="serviceMode" value="pviPOOD" />
+            <camunda:property name="processName" value="BP_08.0_001" />
+            <camunda:property name="poodStepId" value="SendStatusToOutSystem" />
+            <camunda:property name="isSavingFromMessageBodyRequired" value="true" />
+            <camunda:property name="isDocumentFileRequired" value="false" />
+            <camunda:property name="isSignatureFileRequired" value="false" />
+            <camunda:property name="isItemsWithData" value="true" />
+            <camunda:property name="documentTypePath" value="integration_context.context.entities[0].type" />
+            <camunda:property name="dataConverterType" value="base64" />
+          </camunda:properties>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="status_to_pood">true</camunda:inputParameter>
+            <camunda:inputParameter name="create_route">true</camunda:inputParameter>
+            <camunda:inputParameter name="status-out-answer">${status-out-answer}</camunda:inputParameter>
+            <camunda:inputParameter name="id-reestr-record">${id-reestr-record}</camunda:inputParameter>
+            <camunda:outputParameter name="status">${status}</camunda:outputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_059afsz</bpmn:incoming>
+        <bpmn:outgoing>Flow_1kmcuaz</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:intermediateThrowEvent id="PoodAdapterOutcome_SendStatus_FNP" name="Шаг 5. Передача статуса отправки сообщения в ПООД">
+        <bpmn:documentation>Передать в ПООД статус об отправке документа.</bpmn:documentation>
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="serviceName" value="PoodAdapterOutcome" />
+            <camunda:property name="serviceVersion" value="1.0" />
+          </camunda:properties>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">${payload}</camunda:inputParameter>
+            <camunda:inputParameter name="entity_id">${entity_id}</camunda:inputParameter>
+            <camunda:inputParameter name="partition">${partition?}</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1kmcuaz</bpmn:incoming>
+        <bpmn:outgoing>Flow_144e5nq</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1n6p7qz" />
+      </bpmn:intermediateThrowEvent>
+      <bpmn:sequenceFlow id="Flow_1kmcuaz" sourceRef="PoodDocsBuilder_SendStatus_FNP" targetRef="PoodAdapterOutcome_SendStatus_FNP" />
+      <bpmn:sequenceFlow id="Flow_059afsz" sourceRef="SmevAdapterOutcome_CheckDocumentRequest_FNP_SBP1" targetRef="PoodDocsBuilder_SendStatus_FNP" />
+      <bpmn:endEvent id="End_SendStatus_FNP">
+        <bpmn:incoming>Flow_144e5nq</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_144e5nq" sourceRef="PoodAdapterOutcome_SendStatus_FNP" targetRef="End_SendStatus_FNP" />
+      <bpmn:sequenceFlow id="Flow_137bzn6" sourceRef="SmevAdapterIncome_StatCardStatusResponse_FNP_SBP2" targetRef="ZipUnzip_FNP_SBP2" />
+      <bpmn:task id="ZipUnzip_FNP_SBP2" name="Шаг 7.1. Распаковка архива">
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="serviceName" value="ZipUnzipDocuments" />
+            <camunda:property name="serviceVersion" value="2.0" />
+            <camunda:property name="zipProcessingType" value="unzip" />
+            <camunda:property name="isPrimaryDocument" value="true" />
+            <camunda:property name="haveSignature" value="true" />
+            <camunda:property name="findDocNameMask" value="report.xml" />
+            <camunda:property name="findSigNameMask" value="notary.sig" />
+          </camunda:properties>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="zip">$(attachments)</camunda:inputParameter>
+            <camunda:outputParameter name="attachments">${attachments?""}</camunda:outputParameter>
+            <camunda:outputParameter name="doc">${doc}</camunda:outputParameter>
+            <camunda:outputParameter name="sig">${sig}</camunda:outputParameter>
+            <camunda:outputParameter name="status_code">status_codeValue</camunda:outputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_137bzn6</bpmn:incoming>
+        <bpmn:outgoing>Flow_15wtbj7</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id="Flow_15wtbj7" sourceRef="ZipUnzip_FNP_SBP2" targetRef="PoodDocsBuilder_FNP_SBP2" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="End_BP08_SBP2">
+      <bpmn:incoming>Flow_1i7yp7v</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1i7yp7v" sourceRef="SubProcess_FNP" targetRef="End_BP08_SBP2" />
+    <bpmn:intermediateCatchEvent id="PoodAdapterIncome_processFnpCheckDocs" name="Шаг 1. Приём запроса из ПООД">
+      <bpmn:documentation>Приём сообщения формата container из ПООД в ПВИ с запросом в Федеральную нотариальную палату.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="serviceName" value="PoodAdapterIncome" />
+          <camunda:property name="serviceVersion" value="2.0" />
+          <camunda:property name="poodStepId" value="SendFNPCheckDocumentRequest" />
+          <camunda:property name="processName" value="BP_08.0_001" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1eznba3</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0708p1m" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1eznba3" sourceRef="PoodAdapterIncome_processFnpCheckDocs" targetRef="SubProcess_FNP" />
+    <bpmn:group id="Group_POOD_FNP" categoryValueRef="CategoryValue_0cqhxnl" />
+    <bpmn:group id="Group_SMEV_FNP" categoryValueRef="CategoryValue_1b8wpxt" />
+  </bpmn:process>
+  <bpmn:category id="Category_1alwtrq">
+    <bpmn:categoryValue id="CategoryValue_0cqhxnl" value="ПООД" />
+  </bpmn:category>
+  <bpmn:category id="Category_1nrxlp7">
+    <bpmn:categoryValue id="CategoryValue_1b8wpxt" value="СМЭВ 3" />
+  </bpmn:category>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BP06_01.0_0000137">
+      <bpmndi:BPMNEdge id="Flow_1eznba3_di" bpmnElement="Flow_1eznba3">
+        <di:waypoint x="340" y="852" />
+        <di:waypoint x="340" y="790" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i7yp7v_di" bpmnElement="Flow_1i7yp7v">
+        <di:waypoint x="720" y="790" />
+        <di:waypoint x="720" y="852" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0j2cslf_di" bpmnElement="SubProcess_FNP" isExpanded="true">
+        <dc:Bounds x="220" y="120" width="1370" height="670" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_15wtbj7_di" bpmnElement="Flow_15wtbj7">
+        <di:waypoint x="740" y="450" />
+        <di:waypoint x="740" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_137bzn6_di" bpmnElement="Flow_137bzn6">
+        <di:waypoint x="740" y="268" />
+        <di:waypoint x="740" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_144e5nq_di" bpmnElement="Flow_144e5nq">
+        <di:waypoint x="338" y="685" />
+        <di:waypoint x="382" y="685" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_059afsz_di" bpmnElement="Flow_059afsz">
+        <di:waypoint x="512" y="250" />
+        <di:waypoint x="320" y="250" />
+        <di:waypoint x="320" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kmcuaz_di" bpmnElement="Flow_1kmcuaz">
+        <di:waypoint x="320" y="520" />
+        <di:waypoint x="320" y="667" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bv0g97_di" bpmnElement="Flow_1bv0g97">
+        <di:waypoint x="740" y="600" />
+        <di:waypoint x="740" y="667" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1me96ut_di" bpmnElement="Flow_1me96ut">
+        <di:waypoint x="548" y="250" />
+        <di:waypoint x="722" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pyt34z_di" bpmnElement="Flow_1pyt34z">
+        <di:waypoint x="530" y="667" />
+        <di:waypoint x="530" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u49wwe_di" bpmnElement="Flow_1u49wwe">
+        <di:waypoint x="722" y="685" />
+        <di:waypoint x="678" y="685" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10qnvjt_di" bpmnElement="Flow_10qnvjt">
+        <di:waypoint x="530" y="440" />
+        <di:waypoint x="530" y="268" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0rnaiat_di" bpmnElement="SmevAdapterOutcome_CheckDocumentRequest_FNP_SBP1" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="512" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="486" y="150" width="87" height="80" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0k8anmh_di" bpmnElement="PoodAdapterOutcome_SendReceiptCashService_v1_BP08_SBP2" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="722" y="667" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="698" y="710" width="89" height="66" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03ehjdw_di" bpmnElement="EndSendReceipt_BP08_SBP2">
+        <dc:Bounds x="642" y="667" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0m3r4oz_di" bpmnElement="SmevAdapterIncome_StatCardStatusResponse_FNP_SBP2" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="722" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="695" y="150" width="89" height="80" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sm97lh_di" bpmnElement="PoodDocsBuilder_1" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="480" y="440" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1f4x1qn_di" bpmnElement="Start_FNP">
+        <dc:Bounds x="512" y="667" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mcgspy_di" bpmnElement="PoodDocsBuilder_FNP_SBP2" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="690" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04u4av0_di" bpmnElement="PoodDocsBuilder_SendStatus_FNP" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="270" y="440" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02km009_di" bpmnElement="PoodAdapterOutcome_SendStatus_FNP" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="302" y="667" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="279" y="710" width="86" height="66" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16mc6fm_di" bpmnElement="End_SendStatus_FNP">
+        <dc:Bounds x="382" y="667" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1spf6b8_di" bpmnElement="ZipUnzip_FNP_SBP2" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="690" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14sc83s_di" bpmnElement="End_BP08_SBP2">
+        <dc:Bounds x="702" y="852" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lb8tmm_di" bpmnElement="PoodAdapterIncome_processFnpCheckDocs" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="322" y="852" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="309" y="895" width="69" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0g8hnkw_di" bpmnElement="Group_POOD_FNP">
+        <dc:Bounds x="160" y="628" width="760" height="322" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="639" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_1exoefd_di" bpmnElement="Group_SMEV_FNP">
+        <dc:Bounds x="180" y="86" width="760" height="247" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="183" y="93" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

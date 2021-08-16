@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0jmef65" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.7.0">
+  <bpmn:category id="Category_0qppnfw">
+    <bpmn:categoryValue id="CategoryValue_0oyg0al" value="СМЭВ" />
+  </bpmn:category>
+  <bpmn:signal id="Signal_17ycx8k" name="Signal_BP_01_SendResolution" />
+  <bpmn:message id="Message_1ifsrno" name="BP_01_MVV_SendResolution" />
+  <bpmn:message id="Message_0e0f3sa" name="BP_02-03_MVV_Start" />
+  <bpmn:category id="Category_1dlp44g">
+    <bpmn:categoryValue id="CategoryValue_0ixkup2" value="ПООД" />
+  </bpmn:category>
+  <bpmn:process id="BP_01" name="Прием и первичное рассмотрение ИД" isExecutable="true" camunda:versionTag="1.0">
+    <bpmn:endEvent id="EndStatus_BP01_SBP17">
+      <bpmn:incoming>Flow_115odq0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateThrowEvent id="PoodAdapterOutcome_SendStatusToOutSystem_BP01_SBP17" name="SBP17. Передача статуса отправки сообщения в ПООД">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="serviceName" value="PoodAdapterOutcome" />
+          <camunda:property name="serviceVersion" value="1.0" />
+          <camunda:property name="poodStepId" value="SendStatusToOutSystem" />
+          <camunda:property name="processName" value="BP_01" />
+          <camunda:property name="poodTopic" value="pvi-pood-topic" />
+          <camunda:property name="isDocumentFileRequired" value="false" />
+          <camunda:property name="isSignatureFileRequired" value="false" />
+          <camunda:property name="isSavingFromMessageBodyRequired" value="false" />
+          <camunda:property name="isItemsWithData" value="true" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0if7y9l</bpmn:incoming>
+      <bpmn:outgoing>Flow_115odq0</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_13wrp0q" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="EndDoc_BP01_SBP17">
+      <bpmn:incoming>Flow_1m6zk2a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateThrowEvent id="PoodAdapterOutcome_SendImportRenouncementInfo_BP01_SBP17" name="SBP17. Отправка в ПООД результатов">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="serviceName" value="PoodAdapterOutcome" />
+          <camunda:property name="serviceVersion" value="1.0" />
+          <camunda:property name="processName" value="BP_01" />
+          <camunda:property name="poodStepId" value="SendImportRenouncementInfo_v1" />
+          <camunda:property name="isDocumentFileRequired" value="false" />
+          <camunda:property name="isSignatureFileRequired" value="false" />
+          <camunda:property name="isItemsWithData" value="true" />
+          <camunda:property name="isSavingFromMessageBodyRequired " value="false" />
+        </camunda:properties>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="payload">${payload}</camunda:inputParameter>
+          <camunda:inputParameter name="partition">${partition}</camunda:inputParameter>
+          <camunda:inputParameter name="entity_id">${entity_id}</camunda:inputParameter>
+          <camunda:inputParameter name="properties.renouncement_id">${renouncement_id}</camunda:inputParameter>
+          <camunda:inputParameter name="properties.renouncement_status">${renouncement_status}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0o78xhe</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m6zk2a</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1vlwh15" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:startEvent id="Start_BP01_SBP16">
+      <bpmn:outgoing>Flow_0032ctz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="PayloadTransformer_BP01_SBP16" name="SBP16. Трансформация payload">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="serviceName" value="PayloadTransformer" />
+          <camunda:property name="serviceVersion" value="1.0" />
+        </camunda:properties>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="delivery_type">СМЭВ</camunda:inputParameter>
+          <camunda:inputParameter name="recipient_type">ФК</camunda:inputParameter>
+          <camunda:inputParameter name="create_reestr_record_payload">true</camunda:inputParameter>
+          <camunda:inputParameter name="payload">${payload}</camunda:inputParameter>
+          <camunda:inputParameter name="create_route">false</camunda:inputParameter>
+          <camunda:outputParameter name="payload">${payload}</camunda:outputParameter>
+          <camunda:outputParameter name="id_reestr_record">${id_reestr_record}</camunda:outputParameter>
+          <camunda:outputParameter name="route_payload">${route_payload}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0032ctz</bpmn:incoming>
+      <bpmn:outgoing>Flow_01wyb0l</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="PayloadTransformer_BP01_SBP17" name="SBP17. Трансформация payload">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="serviceName" value="PayloadTransformer" />
+          <camunda:property name="serviceVersion" value="1.0" />
+        </camunda:properties>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status-out-answer">${status-out-answer}</camunda:inputParameter>
+          <camunda:inputParameter name="status_to_pood">true</camunda:inputParameter>
+          <camunda:inputParameter name="create_route">true</camunda:inputParameter>
+          <camunda:outputParameter name="payload">${status}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1m87lqs</bpmn:incoming>
+      <bpmn:outgoing>Flow_0if7y9l</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Condition_BP01_SBP17" name="SBP17. Условие на тип ответа (развилка)" default="Flow_0o78xhe">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="serviceName" value="Condition" />
+          <camunda:property name="serviceVersion" value="1.0" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10n5qlo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o78xhe</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1m87lqs</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateCatchEvent id="MSE_GisGmp_2_SendRenouncementResponse" name="SBP17. Получение ответа с результатами обработки из служебного процесса">
+      <bpmn:incoming>Flow_03vil1c</bpmn:incoming>
+      <bpmn:outgoing>Flow_10n5qlo</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0klwu1o" messageRef="Message_1oae3km" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateThrowEvent id="MSE_GisGmp_1_CollectRenouncement" name="SBP16. Отправка извещения об отказе в служебный процесс">
+      <bpmn:incoming>Flow_01wyb0l</bpmn:incoming>
+      <bpmn:outgoing>Flow_03vil1c</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0t5e6cp" messageRef="Message_0o7xu7v" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_115odq0" sourceRef="PoodAdapterOutcome_SendStatusToOutSystem_BP01_SBP17" targetRef="EndStatus_BP01_SBP17" />
+    <bpmn:sequenceFlow id="Flow_0if7y9l" sourceRef="PayloadTransformer_BP01_SBP17" targetRef="PoodAdapterOutcome_SendStatusToOutSystem_BP01_SBP17" />
+    <bpmn:sequenceFlow id="Flow_1m6zk2a" sourceRef="PoodAdapterOutcome_SendImportRenouncementInfo_BP01_SBP17" targetRef="EndDoc_BP01_SBP17" />
+    <bpmn:sequenceFlow id="Flow_0o78xhe" sourceRef="Condition_BP01_SBP17" targetRef="PoodAdapterOutcome_SendImportRenouncementInfo_BP01_SBP17" />
+    <bpmn:sequenceFlow id="Flow_0032ctz" sourceRef="Start_BP01_SBP16" targetRef="PayloadTransformer_BP01_SBP16" />
+    <bpmn:sequenceFlow id="Flow_01wyb0l" sourceRef="PayloadTransformer_BP01_SBP16" targetRef="MSE_GisGmp_1_CollectRenouncement" />
+    <bpmn:sequenceFlow id="Flow_1m87lqs" sourceRef="Condition_BP01_SBP17" targetRef="PayloadTransformer_BP01_SBP17">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">$is_smev_status == true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_10n5qlo" sourceRef="MSE_GisGmp_2_SendRenouncementResponse" targetRef="Condition_BP01_SBP17" />
+    <bpmn:sequenceFlow id="Flow_03vil1c" sourceRef="MSE_GisGmp_1_CollectRenouncement" targetRef="MSE_GisGmp_2_SendRenouncementResponse" />
+    <bpmn:group id="Group_POOD_BP01" categoryValueRef="CategoryValue_0ixkup2" />
+    <bpmn:group id="Group_SMEV_BP01" categoryValueRef="CategoryValue_0oyg0al" />
+  </bpmn:process>
+  <bpmn:message id="Message_1a24tq8" name="GisGmp_ExportCharges_1_InfoCollectUIN" />
+  <bpmn:message id="Message_10ngyn5" name="GisGmp_ExportCharges_2_SendResponse" />
+  <bpmn:message id="Message_0rmlxth" name="GisGmp_ExportCharges_1_InfoCollectUIN" />
+  <bpmn:message id="Message_1ci414h" name="GisGmp_ExportCharges_2_SendResponse" />
+  <bpmn:message id="Message_057wp7g" name="GisGmp_3_SendChargeNotification" />
+  <bpmn:message id="Message_0o7xu7v" name="GisGmp_1_CollectRenouncement" />
+  <bpmn:message id="Message_1oae3km" name="GisGmp_2_SendRenouncementResponse" />
+  <bpmn:message id="Message_0uu9af8" name="BP_02-03_MVV_Start" />
+  <bpmn:message id="Message_1frb6e3" name="BP_03_MVV_Resol_Send" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BP_01">
+      <bpmndi:BPMNEdge id="Flow_03vil1c_di" bpmnElement="Flow_03vil1c">
+        <di:waypoint x="398" y="190" />
+        <di:waypoint x="502" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10n5qlo_di" bpmnElement="Flow_10n5qlo">
+        <di:waypoint x="520" y="208" />
+        <di:waypoint x="520" y="395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m87lqs_di" bpmnElement="Flow_1m87lqs">
+        <di:waypoint x="545" y="420" />
+        <di:waypoint x="700" y="420" />
+        <di:waypoint x="700" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01wyb0l_di" bpmnElement="Flow_01wyb0l">
+        <di:waypoint x="380" y="480" />
+        <di:waypoint x="380" y="208" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0032ctz_di" bpmnElement="Flow_0032ctz">
+        <di:waypoint x="380" y="762" />
+        <di:waypoint x="380" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o78xhe_di" bpmnElement="Flow_0o78xhe">
+        <di:waypoint x="520" y="445" />
+        <di:waypoint x="520" y="762" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m6zk2a_di" bpmnElement="Flow_1m6zk2a">
+        <di:waypoint x="538" y="780" />
+        <di:waypoint x="592" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0if7y9l_di" bpmnElement="Flow_0if7y9l">
+        <di:waypoint x="700" y="560" />
+        <di:waypoint x="700" y="762" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_115odq0_di" bpmnElement="Flow_115odq0">
+        <di:waypoint x="718" y="780" />
+        <di:waypoint x="782" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_11ee5ff_di" bpmnElement="EndStatus_BP01_SBP17">
+        <dc:Bounds x="782" y="762" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kgw0bj_di" bpmnElement="PoodAdapterOutcome_SendStatusToOutSystem_BP01_SBP17" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="682" y="762" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="668" y="805" width="67" height="80" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1p054bd_di" bpmnElement="EndDoc_BP01_SBP17">
+        <dc:Bounds x="592" y="762" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gtfu2b_di" bpmnElement="PoodAdapterOutcome_SendImportRenouncementInfo_BP01_SBP17" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="502" y="762" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="476" y="812" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ixqy5o_di" bpmnElement="Start_BP01_SBP16">
+        <dc:Bounds x="362" y="762" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qwg3fw_di" bpmnElement="PayloadTransformer_BP01_SBP16" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="330" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1k0ge7e_di" bpmnElement="PayloadTransformer_BP01_SBP17" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="650" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1137488_di" bpmnElement="Condition_BP01_SBP17" isMarkerVisible="true" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="495" y="395" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="399" y="410" width="83" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ptvryo_di" bpmnElement="MSE_GisGmp_2_SendRenouncementResponse" bioc:stroke="rgb(229, 57, 53)" bioc:fill="rgb(255, 205, 210)">
+        <dc:Bounds x="502" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="530" y="90" width="69" height="93" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0du0v5z_di" bpmnElement="MSE_GisGmp_1_CollectRenouncement" bioc:stroke="rgb(229, 57, 53)" bioc:fill="rgb(255, 205, 210)">
+        <dc:Bounds x="362" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="335" y="86" width="90" height="66" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_008pxpu_di" bpmnElement="Group_POOD_BP01">
+        <dc:Bounds x="160" y="725" width="750" height="185" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="185" y="733" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_1cdpdz9_di" bpmnElement="Group_SMEV_BP01">
+        <dc:Bounds x="160" y="88" width="750" height="182" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="178" y="106" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

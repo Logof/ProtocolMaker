@@ -1,0 +1,73 @@
+<p class="auto-cursor-target"><br/></p>
+<ac:structured-macro ac:name="expand"
+                     ac:schema-version="1"
+                     ac:macro-id="8056db28-56c3-46a4-941c-37349eae71da">
+    <ac:parameter ac:name="title">Оглавление</ac:parameter>
+    <ac:rich-text-body>
+        <p>
+            <ac:structured-macro ac:name="toc"
+                                 ac:schema-version="1"
+                                 ac:macro-id="ed0a4a75-6d81-4b41-842d-baa6e07fe94a">
+                <ac:parameter ac:name="maxLevel">3</ac:parameter>
+            </ac:structured-macro>
+        </p>
+    </ac:rich-text-body>
+</ac:structured-macro>
+
+<h1><strong>${protocol_name}</strong></h1>
+
+<table class="wrapped">
+    <colgroup>
+        <col/>
+        <col/>
+    </colgroup>
+    <tbody>
+    <tr>
+        <th><p>Код</p></th>
+        <th><p>Наименование</p></th>
+    </tr>
+    <tr>
+        <td>${protocol_code}</td>
+        <td>${protocol_name}</td>
+    </tr>
+    </tbody>
+</table>
+
+<ol>
+    <li style="list-style-type: none;">
+        <ul>
+            <li>ВС - <a href="${SMEV3Info.url}">${SMEV3Info.url}</a>;</li>
+            <li>значение идентификатора ВС - ${SMEV3Info.id};</li>
+            <li>Namespace URI - ${SMEV3Info.namespace};</li>
+            <li>версия - ${SMEV3Info.version};</li>
+            <li>дата регистрации - ${SMEV3Info.regDate};</li>
+            <li>тип маршрутизации - ${SMEV3Info.routingType};</li>
+            <li>RootElement - ${SMEV3Info.rootTag};</li>
+            <li>xsd - <a href="${SMEV3Info.xsdUrl}">${SMEV3Info.xsdUrl}</a></li>
+        </ul>
+    </li>
+</ol>
+
+<h1><strong>Назначение протокола обмена</strong></h1>
+<p>${protocol_description}</p>
+
+<h1><strong>БП, в котором реализуется протокол</strong></h1>
+<table class="wrapped">
+    <colgroup>
+        <col/>
+        <col/>
+    </colgroup>
+    <tbody>
+    <tr>
+        <th>Код БП</th>
+        <th>Наименование БП</th>
+    </tr>
+    ${tr_bp_code_bp_description}
+    </tbody>
+</table>
+
+<h1><strong>Общая логика работы протокола обмена</strong></h1>
+<p>Заполняется аналитиком вручную</p>
+
+<h1><strong>Описание шагов процесса!</strong></h1>
+${steps}
